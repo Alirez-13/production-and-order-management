@@ -1,0 +1,6 @@
+{
+  "name": "سامانه یکپارچه مدیریت تولید، سفارشات و انبار",
+  "description": "پلتفرم جامع و آنلاین مدیریت خط تولید (صف، در حال ساخت، تکمیل)، انبارداری خودکار، سفارشات مشتریان، تاریخچه خرید، دسترسی نقش‌ها با مجوز Read/Write و نمودارهای تحلیلی فروش",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
