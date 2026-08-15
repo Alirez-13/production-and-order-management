@@ -3,10 +3,13 @@ import {
   WarehouseProduct, 
   ProductCategory, 
   ProductionLine, 
-  AppUser 
+  AppUser,
+  ProductSnapshot 
 } from '../types';
 import { StorageService } from '../services/storageService';
-import { formatCurrency, formatPersianNumber } from '../utils/formatters';
+import { formatCurrency, formatPersianNumber, formatDateFa } from '../utils/formatters';
+import { ProductSnapshotsHistoryModal } from './ProductSnapshotsHistoryModal';
+import { ProductSnapshotModal } from './ProductSnapshotModal';
 import { 
   Package, 
   Plus, 
@@ -24,7 +27,11 @@ import {
   Boxes,
   Sparkles,
   Sliders,
-  DollarSign
+  DollarSign,
+  History,
+  Archive,
+  RotateCcw,
+  Camera
 } from 'lucide-react';
 
 interface ProductCatalogProps {
@@ -54,7 +61,13 @@ export function ProductCatalog({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
   const [selectedLineFilter, setSelectedLineFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'discontinued'>('all');
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
+
+  // Snapshot Modals
+  const [isAllSnapshotsModalOpen, setIsAllSnapshotsModalOpen] = useState(false);
+  const [selectedProductForSnapshots, setSelectedProductForSnapshots] = useState<WarehouseProduct | null>(null);
+  const [selectedSingleSnapshot, setSelectedSingleSnapshot] = useState<ProductSnapshot | null>(null);
 
   // Form states for adding/editing product
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -268,6 +281,31 @@ export function ProductCatalog({
     }
   };
 
+  // Discontinue product (creates archival snapshot)
+  const handleDiscontinueProduct = (prod: WarehouseProduct) => {
+    const reason = prompt(`دلیل توقف تولید و بایگانی محصول «${prod.name}» را وارد نمایید:`, 'تغییر سبد محصول و پایان چرخه عمر کالا');
+    if (reason === null) return;
+    const res = StorageService.discontinueProduct(prod.id, reason || 'توقف خط تولید', currentUser.name);
+    if (res.success) {
+      showToast('success', `تولید محصول «${prod.name}» متوقف شد و اسنپ‌شات نهایی در تاریخچه پایگاه‌داده بایگانی گردید.`);
+      onRefreshData();
+    } else {
+      showToast('error', res.error || 'خطا در توقف تولید');
+    }
+  };
+
+  // Reactivate product
+  const handleReactivateProduct = (prod: WarehouseProduct) => {
+    if (!confirm(`آیا می‌خواهید محصول «${prod.name}» را مجدداً به چرخه تولید فعال بازگردانید؟`)) return;
+    const res = StorageService.reactivateProduct(prod.id, currentUser.name);
+    if (res.success) {
+      showToast('success', `محصول «${prod.name}» با موفقیت فعال و به خط تولید بازگردانده شد.`);
+      onRefreshData();
+    } else {
+      showToast('error', res.error || 'خطا در فعال‌سازی مجدد');
+    }
+  };
+
   // Filtered Products
   const filteredProducts = products.filter((p) => {
     const q = searchQuery.trim().toLowerCase();
@@ -294,9 +332,14 @@ export function ProductCatalog({
       p.productionLineName === selectedLineFilter ||
       (targetLine && (p.productionLineName === targetLine.name || p.productionLineId === targetLine.id || p.productionLineName === targetLine.code));
 
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'active' && (!p.status || p.status === 'active')) ||
+      (statusFilter === 'discontinued' && (p.status === 'discontinued' || p.status === 'archived'));
+
     const matchesLowStock = !showLowStockOnly || p.stockQuantity <= p.minAlertThreshold;
 
-    return matchesSearch && matchesCategory && matchesLine && matchesLowStock;
+    return matchesSearch && matchesCategory && matchesLine && matchesStatus && matchesLowStock;
   });
 
   // Category counts
@@ -419,6 +462,19 @@ export function ProductCatalog({
               <Factory className="w-4 h-4" />
               خطوط تولید ({formatPersianNumber(productionLines.length)})
             </button>
+
+            <button
+              onClick={() => setIsAllSnapshotsModalOpen(true)}
+              className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                isDark
+                  ? 'bg-teal-950/40 border-teal-800/60 text-teal-300 hover:bg-teal-900/40'
+                  : 'bg-teal-50 border-teal-200 text-teal-800 hover:bg-teal-100'
+              }`}
+              title="مشاهده تمام اسنپ‌شات‌های ثبت‌شده تاریخی محصولات"
+            >
+              <History className="w-4 h-4" />
+              <span>تاریخچه اسنپ‌شات‌ها</span>
+            </button>
           </div>
         </div>
       </div>
@@ -487,6 +543,21 @@ export function ProductCatalog({
                 ))}
               </select>
 
+              {/* Status Filter */}
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className={`px-3 py-2 text-xs rounded-xl border outline-none cursor-pointer ${
+                  isDark
+                    ? 'bg-[#18181B] border-[#27272A] text-gray-200 focus:border-teal-500'
+                    : 'bg-gray-50 border-gray-300 text-gray-800 focus:border-teal-600'
+                }`}
+              >
+                <option value="all">تمام وضعیت‌ها</option>
+                <option value="active">🟢 در حال تولید (فعال)</option>
+                <option value="discontinued">⚪ توقف تولید (بایگانی شده)</option>
+              </select>
+
               {/* Low stock toggle */}
               <button
                 onClick={() => setShowLowStockOnly(!showLowStockOnly)}
@@ -510,12 +581,17 @@ export function ProductCatalog({
               const matchedCat = categories.find((c) => c.id === prod.categoryId || c.name === prod.category);
               const matchedLine = productionLines.find((l) => l.id === prod.productionLineId || l.name === prod.productionLineName);
               const isLowStock = prod.stockQuantity <= prod.minAlertThreshold;
+              const isDiscontinued = prod.status === 'discontinued' || prod.status === 'archived';
 
               return (
                 <div
                   key={prod.id}
                   className={`p-5 rounded-2xl border transition-all hover:shadow-md flex flex-col justify-between ${
-                    isDark
+                    isDiscontinued
+                      ? isDark
+                        ? 'bg-[#151518] border-gray-800/80 opacity-90'
+                        : 'bg-gray-50/90 border-gray-200 opacity-90'
+                      : isDark
                       ? 'bg-[#121214] border-[#27272A] hover:border-gray-700'
                       : 'bg-white border-gray-200 hover:border-gray-300'
                   }`}
@@ -523,9 +599,22 @@ export function ProductCatalog({
                   <div className="space-y-3">
                     {/* Top badging */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                        {prod.sku}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                          {prod.sku}
+                        </span>
+                        {isDiscontinued ? (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-gray-500/20 text-gray-400 border border-gray-500/30 flex items-center gap-1">
+                            <Archive className="w-3 h-3" />
+                            توقف تولید (بایگانی)
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            در حال تولید
+                          </span>
+                        )}
+                      </div>
 
                       <div className="flex items-center gap-1.5">
                         {matchedCat && (
@@ -605,42 +694,87 @@ export function ProductCatalog({
                     </div>
                   </div>
 
-                  {/* Actions */}
+                  {/* Actions & Snapshot history */}
                   <div
-                    className={`mt-4 pt-3 border-t flex items-center justify-between ${
+                    className={`mt-4 pt-3 border-t flex items-center justify-between gap-2 ${
                       isDark ? 'border-[#27272A]' : 'border-gray-100'
                     }`}
                   >
-                    <span className="text-[11px] text-gray-400">
-                      قفسه: <b className="font-mono text-gray-300">{prod.locationBin || 'تعیین‌نشده'}</b>
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-gray-400">
+                        قفسه: <b className="font-mono text-gray-300">{prod.locationBin || 'تعیین‌نشده'}</b>
+                      </span>
 
-                    {canWrite && (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleOpenEditProduct(prod)}
-                          className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                            isDark
-                              ? 'bg-[#18181B] border-[#27272A] text-gray-400 hover:text-white hover:border-teal-500'
-                              : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900'
-                          }`}
-                          title="ویرایش محصول"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProduct(prod.id, prod.name)}
-                          className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                            isDark
-                              ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 hover:bg-rose-500/20'
-                              : 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100'
-                          }`}
-                          title="حذف محصول"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    )}
+                      {/* Snapshots Button */}
+                      <button
+                        onClick={() => setSelectedProductForSnapshots(prod)}
+                        className={`px-2 py-1 rounded-lg border text-[11px] font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                          isDark
+                            ? 'bg-[#1c1c20] border-gray-700 text-teal-400 hover:bg-teal-950/30'
+                            : 'bg-teal-50 border-teal-200 text-teal-700 hover:bg-teal-100'
+                        }`}
+                        title="مشاهده تاریخچه اسنپ‌شات‌های تولید و لجستیک این محصول"
+                      >
+                        <Camera className="w-3 h-3" />
+                        <span>اسنپ‌شات‌ها</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {canWrite && (
+                        <>
+                          {isDiscontinued ? (
+                            <button
+                              onClick={() => handleReactivateProduct(prod)}
+                              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                isDark
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                                  : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
+                              }`}
+                              title="فعال‌سازی مجدد و بازگشت به خط تولید"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleDiscontinueProduct(prod)}
+                              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                isDark
+                                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
+                                  : 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'
+                              }`}
+                              title="توقف تولید و ثبت اسنپ‌شات پایانی در تاریخچه"
+                            >
+                              <Archive className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => handleOpenEditProduct(prod)}
+                            className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                              isDark
+                                ? 'bg-[#18181B] border-[#27272A] text-gray-400 hover:text-white hover:border-teal-500'
+                                : 'bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-900'
+                            }`}
+                            title="ویرایش محصول"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteProduct(prod.id, prod.name)}
+                            className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                              isDark
+                                ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 hover:bg-rose-500/20'
+                                : 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100'
+                            }`}
+                            title="حذف کامل از کاتالوگ"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -1252,6 +1386,29 @@ export function ProductCatalog({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Product Snapshots History Modal (Filtered by product if selected, or all if selectedProductForSnapshots is null) */}
+      {(isAllSnapshotsModalOpen || selectedProductForSnapshots) && (
+        <ProductSnapshotsHistoryModal
+          productId={selectedProductForSnapshots?.id}
+          productName={selectedProductForSnapshots?.name}
+          onClose={() => {
+            setIsAllSnapshotsModalOpen(false);
+            setSelectedProductForSnapshots(null);
+          }}
+          onViewSnapshotDetails={(snapshot) => setSelectedSingleSnapshot(snapshot)}
+          theme={theme}
+        />
+      )}
+
+      {/* Single Snapshot Details Modal */}
+      {selectedSingleSnapshot && (
+        <ProductSnapshotModal
+          snapshot={selectedSingleSnapshot}
+          onClose={() => setSelectedSingleSnapshot(null)}
+          theme={theme}
+        />
       )}
     </div>
   );

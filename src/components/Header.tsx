@@ -49,10 +49,13 @@ export const Header: React.FC<HeaderProps> = ({
 
   const timeFilterLabels: Record<TimeRangeFilter, string> = {
     today: 'امروز',
+    week: 'این هفته',
     last_7_days: '۷ روز گذشته',
+    month: 'این ماه',
     this_month: 'ماه جاری',
     last_30_days: '۳۰ روز گذشته',
     this_quarter: 'سه ماهه (فصل)',
+    year: 'امسال',
     this_year: 'سال جاری',
     all: 'تمام دوره‌ها',
   };

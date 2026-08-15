@@ -134,13 +134,10 @@ export const WarehouseManagement: React.FC<WarehouseManagementProps> = ({
     );
 
     if (res.success) {
-      showToast('success', `سفارش ${selectedOrderToDispatch.orderNumber} با کد رهگیری ${tracking} ترخیص شد و به سابقه خرید مشتریان پیوست.`);
+      showToast('success', `سفارش ${selectedOrderToDispatch.orderNumber} با کد رهگیری ${tracking} با موفقیت ترخیص و به سابقه خروج پیوست.`);
       setSelectedOrderToDispatch(null);
       setDispatchTrackingCode('');
       onRefreshData();
-      if (onNavigateTab) {
-        onNavigateTab('dashboard');
-      }
     } else {
       showToast('error', res.error || 'خطا در ارسال سفارش');
     }

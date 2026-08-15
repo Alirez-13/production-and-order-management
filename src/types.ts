@@ -59,6 +59,33 @@ export interface ProductionLine {
   createdAt?: string;
 }
 
+export interface ProductSnapshot {
+  id: string;
+  productId: string;
+  productName: string;
+  sku: string;
+  category: string;
+  unit: string;
+  unitCost: number;
+  unitSalePrice: number;
+  productionLineName?: string;
+  locationBin?: string;
+  description?: string;
+  specifications?: string;
+  snapshotTakenAt: string; // ISO format
+  timestamp?: string; // alias for timestamp
+  capturedAt?: string;
+  context: 'production_completed' | 'order_dispatched' | 'manual_archive' | 'line_change' | 'discontinued';
+  snapshotReason?: string;
+  referenceId?: string; // taskId or orderId
+  referenceCode?: string; // taskCode or orderNumber
+  operatorOrUser?: string;
+  capturedBy?: string;
+  producedQuantity?: number;
+  quantity?: number;
+  notes?: string;
+}
+
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -67,6 +94,7 @@ export interface OrderItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  productSnapshot?: ProductSnapshot;
 }
 
 export interface CustomerOrder {
@@ -88,6 +116,7 @@ export interface CustomerOrder {
   notes?: string;
   assignedProductionLineId?: string;
   createdBy?: string;
+  snapshots?: ProductSnapshot[];
 }
 
 export interface ProductionTask {
@@ -111,6 +140,7 @@ export interface ProductionTask {
   operatorName: string;
   notes?: string;
   addedToWarehouse: boolean; // آیا به انبار افزوده شده
+  productSnapshot?: ProductSnapshot; // اسنپ شات فنی و مالی در لحظه تکمیل ساخت
 }
 
 export interface WarehouseProduct {
@@ -129,6 +159,10 @@ export interface WarehouseProduct {
   unitSalePrice: number;
   lastRestockedDate?: string;
   description?: string;
+  specifications?: string;
+  status?: 'active' | 'discontinued' | 'archived'; // وضعیت چرخه حیات کالا
+  discontinuedAt?: string;
+  discontinuedReason?: string;
 }
 
 export interface InventoryLog {
@@ -145,7 +179,7 @@ export interface InventoryLog {
   performedBy: string;
 }
 
-export type TimeRangeFilter = 'today' | 'last_7_days' | 'this_month' | 'last_30_days' | 'this_quarter' | 'this_year' | 'all';
+export type TimeRangeFilter = 'today' | 'week' | 'last_7_days' | 'month' | 'this_month' | 'last_30_days' | 'this_quarter' | 'year' | 'this_year' | 'all';
 
 export interface SalesAnalyticsSummary {
   totalRevenue: number;

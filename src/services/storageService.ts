@@ -7,10 +7,12 @@ import {
   UserRole,
   ModuleName,
   ProductionStage,
+  OrderPriority,
   TimeRangeFilter,
   ProductCategory,
   ProductionLine,
   ThemeMode,
+  ProductSnapshot,
 } from '../types';
 import {
   INITIAL_ORDERS,
@@ -35,6 +37,7 @@ const STORAGE_KEYS = {
   CATEGORIES: 'mes_categories_v1',
   PRODUCTION_LINES: 'mes_production_lines_v1',
   THEME: 'mes_theme_mode_v1',
+  PRODUCT_SNAPSHOTS: 'mes_product_snapshots_v1',
 };
 
 // Safe LocalStorage helpers
@@ -74,6 +77,54 @@ export class StorageService {
 
   static getProductionTasks(): ProductionTask[] {
     return loadFromStorage<ProductionTask[]>(STORAGE_KEYS.PRODUCTION_TASKS, INITIAL_PRODUCTION_TASKS);
+  }
+
+  static getProductSnapshots(productId?: string): ProductSnapshot[] {
+    const all = loadFromStorage<ProductSnapshot[]>(STORAGE_KEYS.PRODUCT_SNAPSHOTS, []);
+    if (productId) {
+      return all.filter((s) => s.productId === productId);
+    }
+    return all;
+  }
+
+  static saveProductSnapshot(snapshot: ProductSnapshot): void {
+    const snapshots = this.getProductSnapshots();
+    snapshots.unshift(snapshot);
+    saveToStorage(STORAGE_KEYS.PRODUCT_SNAPSHOTS, snapshots);
+  }
+
+  static createProductSnapshot(
+    product: WarehouseProduct,
+    context: ProductSnapshot['context'],
+    referenceId?: string,
+    referenceCode?: string,
+    operatorOrUser?: string,
+    producedQuantity?: number,
+    notes?: string
+  ): ProductSnapshot {
+    const snapshot: ProductSnapshot = {
+      id: `snap_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      productId: product.id,
+      productName: product.name,
+      sku: product.sku,
+      category: product.category,
+      unit: product.unit,
+      unitCost: product.unitCost,
+      unitSalePrice: product.unitSalePrice,
+      productionLineName: product.productionLineName,
+      locationBin: product.locationBin,
+      description: product.description,
+      specifications: product.specifications,
+      snapshotTakenAt: new Date().toISOString(),
+      context,
+      referenceId,
+      referenceCode,
+      operatorOrUser,
+      producedQuantity,
+      notes,
+    };
+    this.saveProductSnapshot(snapshot);
+    return snapshot;
   }
 
   static getProducts(): WarehouseProduct[] {
@@ -315,6 +366,71 @@ export class StorageService {
     return { success: true };
   }
 
+  // Discontinue / Archive product and automatically save snapshot to database
+  static discontinueProduct(
+    id: string,
+    reason: string = 'توقف تولید و پایان چرخه عمر محصول',
+    performedBy: string = 'مدیر سیستم'
+  ): { success: boolean; snapshot?: ProductSnapshot; error?: string } {
+    if (!this.checkPermission('warehouse', 'write') && !this.checkPermission('products', 'write')) {
+      return { success: false, error: 'خطای دسترسی: شما مجوز تغییر وضعیت کالا را ندارید.' };
+    }
+
+    const products = this.getProducts();
+    const prod = products.find((p) => p.id === id);
+    if (!prod) return { success: false, error: 'محصول یافت نشد.' };
+
+    prod.status = 'discontinued';
+    prod.discontinuedAt = new Date().toISOString();
+    prod.discontinuedReason = reason;
+    saveToStorage(STORAGE_KEYS.PRODUCTS, products);
+
+    // Create immutable archival snapshot
+    const snapshot = this.createProductSnapshot(
+      prod,
+      'discontinued',
+      prod.id,
+      prod.sku,
+      performedBy,
+      prod.stockQuantity,
+      `بایگانی و توقف رسمی تولید: ${reason}`
+    );
+
+    return { success: true, snapshot };
+  }
+
+  // Reactivate a discontinued product
+  static reactivateProduct(
+    id: string,
+    performedBy: string = 'مدیر سیستم'
+  ): { success: boolean; snapshot?: ProductSnapshot; error?: string } {
+    if (!this.checkPermission('warehouse', 'write') && !this.checkPermission('products', 'write')) {
+      return { success: false, error: 'خطای دسترسی: شما مجوز تغییر وضعیت کالا را ندارید.' };
+    }
+
+    const products = this.getProducts();
+    const prod = products.find((p) => p.id === id);
+    if (!prod) return { success: false, error: 'محصول یافت نشد.' };
+
+    prod.status = 'active';
+    delete prod.discontinuedAt;
+    delete prod.discontinuedReason;
+    saveToStorage(STORAGE_KEYS.PRODUCTS, products);
+
+    // Create active snapshot
+    const snapshot = this.createProductSnapshot(
+      prod,
+      'line_change',
+      prod.id,
+      prod.sku,
+      performedBy,
+      prod.stockQuantity,
+      'فعال‌سازی مجدد و بازگشت به چرخه تولید فعال کارخانه'
+    );
+
+    return { success: true, snapshot };
+  }
+
   // --- ORDER OPERATIONS ---
   static createOrder(
     newOrderData: Partial<CustomerOrder> & {
@@ -488,7 +604,7 @@ export class StorageService {
     }
 
     // CRITICAL REQUIREMENT:
-    // When task is completed, automatically add quantity to warehouse stock and create log
+    // When task is completed, automatically add quantity to warehouse stock, create log, and capture snapshot
     if (newStage === 'completed' && !task.addedToWarehouse) {
       task.completedDate = new Date().toISOString();
       task.addedToWarehouse = true;
@@ -501,6 +617,18 @@ export class StorageService {
         product.stockQuantity += task.quantity;
         product.lastRestockedDate = new Date().toISOString();
         saveToStorage(STORAGE_KEYS.PRODUCTS, products);
+
+        // Take snapshot of product upon production completion
+        const snapshot = this.createProductSnapshot(
+          product,
+          'production_completed',
+          task.id,
+          task.taskCode,
+          performedBy || task.operatorName || 'اپراتور تولید',
+          task.quantity,
+          `اتمام تولید و انتقال به انبار محصول (دستور ${task.taskCode} - خط ${task.productionLine})`
+        );
+        task.productSnapshot = snapshot;
 
         // Add inventory log
         const logs = this.getInventoryLogs();
@@ -568,10 +696,23 @@ export class StorageService {
       }
     }
 
-    // Deduct inventory & create logs
+    // Deduct inventory, create logs, and capture dispatch snapshots
+    const snapshots: ProductSnapshot[] = [];
     for (const item of order.items) {
       const prod = products.find((p) => p.id === item.productId || p.sku === item.sku)!;
       prod.stockQuantity -= item.quantity;
+
+      const snap = this.createProductSnapshot(
+        prod,
+        'order_dispatched',
+        order.id,
+        order.orderNumber,
+        performedBy || 'سرپرست انبار',
+        item.quantity,
+        `ارسال برای مشتری ${order.customerCompany || order.customerName} - کد رهگیری: ${trackingCode || 'ثبت شده'}`
+      );
+      item.productSnapshot = snap;
+      snapshots.push(snap);
 
       const newLog: InventoryLog = {
         id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
@@ -593,6 +734,7 @@ export class StorageService {
     order.status = 'dispatched';
     order.dispatchedDate = new Date().toISOString();
     order.trackingCode = trackingCode || `TRK-EXP-${Math.floor(1000000 + Math.random() * 9000000)}`;
+    order.snapshots = snapshots;
 
     saveToStorage(STORAGE_KEYS.PRODUCTS, products);
     saveToStorage(STORAGE_KEYS.INVENTORY_LOGS, logs);
@@ -737,6 +879,68 @@ export class StorageService {
     saveToStorage(STORAGE_KEYS.CURRENT_USER_ID, 'usr_1');
 
     await ApiService.resetDatabase();
+  }
+
+  // Compatibility and convenient aliases for Clean Architecture Use Cases & Hooks
+  static adjustStock(productId: string, newQuantity: number, reason?: string, performedBy?: string) {
+    return this.adjustStockManually(productId, newQuantity, reason || 'تعدیل دستی انبار', performedBy || 'سرپرست انبار');
+  }
+
+  static dispatchOrder(orderId: string, trackingCode?: string, logisticsNotes?: string, performedBy?: string) {
+    return this.dispatchOrderToCustomer(orderId, trackingCode, performedBy || 'سرپرست انبار', logisticsNotes);
+  }
+
+  static cancelOrder(orderId: string, reason?: string): { success: boolean; error?: string } {
+    if (!this.checkPermission('orders', 'write')) {
+      return { success: false, error: 'خطای دسترسی: شما مجوز لغو سفارش را ندارید.' };
+    }
+    const orders = this.getOrders();
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return { success: false, error: 'سفارش یافت نشد.' };
+    if (order.status === 'dispatched') {
+      return { success: false, error: 'امکان لغو سفارش ارسال‌شده وجود ندارد.' };
+    }
+    order.status = 'cancelled';
+    order.notes = order.notes ? `${order.notes}\n[لغو شد]: ${reason || 'درخواست انصراف'}` : `[لغو شد]: ${reason || 'درخواست انصراف'}`;
+    saveToStorage(STORAGE_KEYS.ORDERS, orders);
+    ApiService.updateOrderStatus(orderId, 'cancelled').catch((e) => console.warn('SQLite update order status error:', e));
+    return { success: true };
+  }
+
+  static updateProductionTaskStage(taskId: string, newStage: ProductionStage, progressPercent?: number, performedBy?: string) {
+    return this.updateTaskStage(taskId, newStage, progressPercent, performedBy);
+  }
+
+  static createProductionTask(taskData: {
+    productId: string;
+    targetQuantity: number;
+    priority?: OrderPriority;
+    productionLine: string;
+    estimatedHours?: number;
+    assignedOperator?: string;
+    notes?: string;
+    relatedOrderId?: string;
+    relatedOrderNumber?: string;
+  }) {
+    const products = this.getProducts();
+    const product = products.find((p) => p.id === taskData.productId);
+    return this.createManualProductionTask({
+      productId: taskData.productId,
+      productName: product?.name || 'محصول سفارشی',
+      sku: product?.sku || 'PRD-CUST',
+      quantity: taskData.targetQuantity,
+      unit: product?.unit || 'عدد',
+      stage: 'queued',
+      progressPercent: 0,
+      priority: taskData.priority || 'medium',
+      productionLine: taskData.productionLine,
+      estimatedHours: taskData.estimatedHours || 12,
+      operatorName: taskData.assignedOperator || 'اپراتور خط تولید',
+      startDate: new Date().toISOString(),
+      orderId: taskData.relatedOrderId,
+      orderNumber: taskData.relatedOrderNumber,
+      notes: taskData.notes || '',
+    });
   }
 
   // Date filtering helper
