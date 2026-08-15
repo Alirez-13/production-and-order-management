@@ -1,4 +1,4 @@
-import { useState, useMemo, FormEvent } from 'react';
+import { useState, useMemo, SubmitEvent } from 'react';
 import { WarehouseProduct, CustomerOrder, InventoryLog, AppUser } from '../types';
 import { StorageService } from '../services/storageService';
 import { ToastMessage } from '../components/ui/ToastNotification';
@@ -56,7 +56,7 @@ export function useWarehouse(
     });
   }, [products, searchQuery, categoryFilter]);
 
-  const handleAdjustStock = (e: FormEvent) => {
+  const handleAdjustStock = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedProductToAdjust) return;
     if (!canWrite) {
@@ -74,7 +74,7 @@ export function useWarehouse(
     }
   };
 
-  const handleDispatchOrder = (e: FormEvent) => {
+  const handleDispatchOrder = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedOrderToDispatch) return;
     if (!canWrite) {
@@ -91,7 +91,6 @@ export function useWarehouse(
       showToast('error', res.error || 'خطا در ارسال سفارش');
     }
   };
-
   return {
     activeSubTab,
     setActiveSubTab,

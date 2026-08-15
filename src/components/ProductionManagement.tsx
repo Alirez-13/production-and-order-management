@@ -116,7 +116,7 @@ export const ProductionManagement: React.FC<ProductionManagementProps> = ({
   };
 
   // Handle sending unprocessed order to production line
-  const handleSendOrderToLine = (e: React.FormEvent) => {
+  const handleSendOrderToLine = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedOrderToDispatch) return;
     if (!canWrite) {
@@ -141,7 +141,7 @@ export const ProductionManagement: React.FC<ProductionManagementProps> = ({
   };
 
   // Handle creating manual production task
-  const handleCreateManualTask = (e: React.FormEvent) => {
+  const handleCreateManualTask = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!canWrite) {
       showToast('error', 'مجوز ایجاد دستور تولید ندارید.');

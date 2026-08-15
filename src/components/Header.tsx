@@ -84,17 +84,8 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className={`text-base font-bold leading-tight ${isDark ? 'text-gray-100' : 'text-slate-900'}`}>
                   سامانه مدیریت تولید و سفارشات
                 </h1>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${
-                  isDark 
-                    ? 'bg-teal-950/60 text-teal-300 border-teal-800/60' 
-                    : 'bg-teal-50 text-teal-800 border-teal-300'
-                }`}>
-                  <Database className="w-3 h-3 text-teal-600" />
-                  Express + SQLite
-                </span>
               </div>
               <p className={`text-xs hidden sm:block ${isDark ? 'text-gray-400' : 'text-slate-700 font-medium'}`}>
-                سیستم آنلاین خط تولید (در صف / در حال تولید / تکمیل شده) و انبارداری یکپارچه
               </p>
             </div>
           </div>
