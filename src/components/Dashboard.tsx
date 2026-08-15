@@ -115,21 +115,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total Revenue */}
-        <div className={`p-5 rounded-2xl border transition-all shadow-sm ${
-          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-gray-200'
+        <div className={`p-5 rounded-2xl border transition-all shadow-xs ${
+          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-slate-200 shadow-slate-100'
         }`}>
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-xs font-bold ${isDark ? 'text-gray-400' : 'text-slate-800'}`}>
               درآمد سفارش‌های تحویل‌شده
             </span>
-            <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-slate-950'}`}>
             {formatCurrency(totalRevenue)}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-teal-400 mt-2 font-medium">
+          <div className="flex items-center gap-1.5 text-xs text-teal-700 dark:text-teal-400 mt-2 font-bold">
             <Truck className="w-3.5 h-3.5" />
             <span>{formatNumber(filteredDispatchedOrders.length)} سفارش با موفقیت ارسال شد</span>
           </div>
@@ -138,47 +138,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Unprocessed Orders */}
         <div 
           onClick={() => onNavigateTab('orders')}
-          className={`p-5 rounded-2xl border transition-all shadow-sm cursor-pointer ${
-            isDark ? 'bg-[#121214] border-[#27272A] hover:border-amber-500/50' : 'bg-white border-gray-200 hover:border-amber-400'
+          className={`p-5 rounded-2xl border transition-all shadow-xs cursor-pointer ${
+            isDark ? 'bg-[#121214] border-[#27272A] hover:border-amber-500/50' : 'bg-white border-slate-200 hover:border-amber-500 shadow-slate-100'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-xs font-bold ${isDark ? 'text-gray-400' : 'text-slate-800'}`}>
               سفارش‌های جدید (پردازش نشده)
             </span>
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center font-bold">
               <ShoppingBag className="w-4 h-4" />
             </div>
           </div>
-          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {formatNumber(unprocessedOrders.length)} <span className="text-xs font-normal">سفارش</span>
+          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-slate-950' : 'text-slate-950'}`}>
+            {formatNumber(unprocessedOrders.length)} <span className="text-xs font-medium">سفارش</span>
           </div>
-          <div className="text-xs text-amber-400 mt-2 font-medium flex items-center gap-1">
+          <div className="text-xs text-amber-800 dark:text-amber-400 mt-2 font-bold flex items-center gap-1">
             <span>نیاز به تخصیص خط تولید</span>
-            <ArrowUpRight className="w-3 h-3" />
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </div>
         </div>
 
         {/* Active Production Lines */}
         <div 
           onClick={() => onNavigateTab('production')}
-          className={`p-5 rounded-2xl border transition-all shadow-sm cursor-pointer ${
-            isDark ? 'bg-[#121214] border-[#27272A] hover:border-indigo-500/50' : 'bg-white border-gray-200 hover:border-indigo-400'
+          className={`p-5 rounded-2xl border transition-all shadow-xs cursor-pointer ${
+            isDark ? 'bg-[#121214] border-[#27272A] hover:border-indigo-500/50' : 'bg-white border-slate-200 hover:border-indigo-500 shadow-slate-100'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-xs font-bold ${isDark ? 'text-gray-400' : 'text-slate-800'}`}>
               دستورهای در خط تولید
             </span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 flex items-center justify-center font-bold">
               <Factory className="w-4 h-4" />
             </div>
           </div>
-          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-slate-950'}`}>
             {formatNumber(activeInProductionTasks.length + queuedProductionTasks.length)}{' '}
-            <span className="text-xs font-normal">دستور ساخت</span>
+            <span className="text-xs font-medium">دستور ساخت</span>
           </div>
-          <div className="text-xs text-indigo-400 mt-2 font-medium flex items-center gap-1">
+          <div className="text-xs text-indigo-800 dark:text-indigo-400 mt-2 font-bold flex items-center gap-1">
             <span>{formatNumber(activeInProductionTasks.length)} در حال ساخت | {formatNumber(queuedProductionTasks.length)} در صف</span>
           </div>
         </div>
@@ -186,25 +186,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Warehouse Inventory */}
         <div 
           onClick={() => onNavigateTab('warehouse')}
-          className={`p-5 rounded-2xl border transition-all shadow-sm cursor-pointer ${
-            isDark ? 'bg-[#121214] border-[#27272A] hover:border-emerald-500/50' : 'bg-white border-gray-200 hover:border-emerald-400'
+          className={`p-5 rounded-2xl border transition-all shadow-xs cursor-pointer ${
+            isDark ? 'bg-[#121214] border-[#27272A] hover:border-emerald-500/50' : 'bg-white border-slate-200 hover:border-emerald-500 shadow-slate-100'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-xs font-bold ${isDark ? 'text-gray-400' : 'text-slate-800'}`}>
               ارزش موجودی کالا در انبار
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">
               <Boxes className="w-4 h-4" />
             </div>
           </div>
-          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <div className={`text-lg font-bold font-mono mt-2 ${isDark ? 'text-white' : 'text-slate-950'}`}>
             {formatCurrency(totalWarehouseValue)}
           </div>
           <div className="flex items-center justify-between text-xs mt-2">
-            <span className="text-emerald-400 font-medium">{formatNumber(products.length)} قلم کالا</span>
+            <span className="text-emerald-800 dark:text-emerald-400 font-bold">{formatNumber(products.length)} قلم کالا</span>
             {lowStockCount > 0 && (
-              <span className="text-rose-400 font-semibold">{formatNumber(lowStockCount)} کسری موجودی</span>
+              <span className="text-rose-800 dark:text-rose-400 font-bold">{formatNumber(lowStockCount)} کسری موجودی</span>
             )}
           </div>
         </div>
@@ -215,19 +215,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Sales trend chart */}
-        <div className={`lg:col-span-2 p-6 rounded-2xl border shadow-sm ${
-          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-gray-200'
+        <div className={`lg:col-span-2 p-6 rounded-2xl border shadow-xs ${
+          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-slate-200 shadow-slate-100'
         }`}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-950'}`}>
                 روند تحویل و ترخیص کالا از انبار
               </h3>
-              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-700 font-medium'}`}>
                 نمودار جریان درآمد حاصل از تحویل سفارشات ارسال‌شده
               </p>
             </div>
-            <span className="text-xs font-bold text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded-lg border border-teal-500/20">
+            <span className="text-xs font-bold text-teal-800 dark:text-teal-300 bg-teal-500/10 px-2.5 py-1 rounded-lg border border-teal-500/30">
               MES Stream
             </span>
           </div>
@@ -241,17 +241,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <stop offset="95%" stopColor="#0d9488" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#27272A' : '#E2E8F0'} vertical={false} />
-                <XAxis dataKey="day" stroke={isDark ? '#71717A' : '#94A3B8'} fontSize={11} tickLine={false} />
-                <YAxis stroke={isDark ? '#71717A' : '#94A3B8'} fontSize={10} tickLine={false} tickFormatter={(v) => `${(v/1000000).toFixed(0)}M`} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#27272A' : '#CBD5E1'} vertical={false} />
+                <XAxis dataKey="day" stroke={isDark ? '#71717A' : '#475569'} fontSize={11} tickLine={false} />
+                <YAxis stroke={isDark ? '#71717A' : '#475569'} fontSize={10} tickLine={false} tickFormatter={(v) => `${(v/1000000).toFixed(0)}M`} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: isDark ? '#18181B' : '#FFFFFF',
-                    borderColor: isDark ? '#27272A' : '#CBD5E1',
+                    borderColor: isDark ? '#27272A' : '#94A3B8',
                     borderRadius: '12px',
                     fontSize: '11px',
                     direction: 'rtl',
-                    color: isDark ? '#F4F4F5' : '#0F172A'
+                    color: isDark ? '#F4F4F5' : '#090D16',
+                    fontWeight: 600
                   }}
                   formatter={(value: any) => [formatCurrency(Number(value)), 'مبلغ تحویل']}
                 />
@@ -262,14 +263,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Order status breakdown */}
-        <div className={`p-6 rounded-2xl border shadow-sm flex flex-col justify-between ${
-          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-gray-200'
+        <div className={`p-6 rounded-2xl border shadow-xs flex flex-col justify-between ${
+          isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-slate-200 shadow-slate-100'
         }`}>
           <div>
-            <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-950'}`}>
               پراکندگی وضعیت سفارشات
             </h3>
-            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} mb-2`}>
+            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-700 font-medium'} mb-2`}>
               چرخه از سفارش جدید تا ارسال نهایی
             </p>
 
@@ -322,34 +323,36 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* ------------------------------------------------------------- */}
       {/* REQUIREMENT: CUSTOMER PURCHASE HISTORY (سابقه خرید مشتری) */}
       {/* ------------------------------------------------------------- */}
-      <div className={`p-6 rounded-2xl border shadow-sm ${
-        isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-gray-200'
+      <div className={`p-6 rounded-2xl border shadow-xs ${
+        isDark ? 'bg-[#121214] border-[#27272A]' : 'bg-white border-slate-200 shadow-slate-100'
       }`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-800">
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${
+          isDark ? 'border-gray-800' : 'border-slate-200'
+        }`}>
           <div>
             <div className="flex items-center gap-2">
-              <PackageCheck className="w-5 h-5 text-teal-400" />
-              <h2 className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <PackageCheck className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+              <h2 className={`text-base font-bold ${isDark ? 'text-white' : 'text-slate-950'}`}>
                 سابقه خرید مشتریان (سفارش‌های ارسال‌شده از انبار)
               </h2>
             </div>
-            <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-slate-700 font-medium'}`}>
               سفارشاتی که پس از تکمیل در خط تولید و ترخیص از انبار با کد رهگیری برای مشتری ارسال شده‌اند.
             </p>
           </div>
 
           {/* Search in customer history */}
           <div className="relative w-full sm:w-72">
-            <Search className={`w-4 h-4 absolute right-3 top-2.5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+            <Search className={`w-4 h-4 absolute right-3 top-2.5 ${isDark ? 'text-gray-500' : 'text-slate-500'}`} />
             <input
               type="text"
               placeholder="جستجو بر اساس مشتری، شرکت یا کد رهگیری..."
               value={customerSearch}
               onChange={(e) => setCustomerSearch(e.target.value)}
-              className={`w-full pr-9 pl-3 py-1.5 text-xs rounded-xl border outline-none ${
+              className={`w-full pr-9 pl-3 py-1.5 text-xs rounded-xl border outline-none font-medium ${
                 isDark 
                   ? 'bg-[#18181B] border-[#27272A] text-white focus:border-teal-500' 
-                  : 'bg-gray-50 border-gray-300 text-gray-900 focus:border-teal-600'
+                  : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-teal-600'
               }`}
             />
           </div>
@@ -359,36 +362,36 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="overflow-x-auto mt-4">
           <table className="w-full text-right text-xs">
             <thead>
-              <tr className={`border-b ${isDark ? 'border-[#27272A] text-gray-400' : 'border-gray-200 text-gray-500'}`}>
-                <th className="py-3 px-3 font-semibold">شماره سفارش</th>
-                <th className="py-3 px-3 font-semibold">نام مشتری و شرکت</th>
-                <th className="py-3 px-3 font-semibold">اقلام و محصولات</th>
-                <th className="py-3 px-3 font-semibold">مبلغ کل (تومان)</th>
-                <th className="py-3 px-3 font-semibold">تاریخ ارسال</th>
-                <th className="py-3 px-3 font-semibold">کد رهگیری پست/باربری</th>
-                <th className="py-3 px-3 font-semibold text-center">عملیات</th>
+              <tr className={`border-b ${isDark ? 'border-[#27272A] text-gray-400' : 'border-slate-200 text-slate-800 font-bold'}`}>
+                <th className="py-3 px-3 font-bold">شماره سفارش</th>
+                <th className="py-3 px-3 font-bold">نام مشتری و شرکت</th>
+                <th className="py-3 px-3 font-bold">اقلام و محصولات</th>
+                <th className="py-3 px-3 font-bold">مبلغ کل (تومان)</th>
+                <th className="py-3 px-3 font-bold">تاریخ ارسال</th>
+                <th className="py-3 px-3 font-bold">کد رهگیری پست/باربری</th>
+                <th className="py-3 px-3 font-bold text-center">عملیات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800/40">
+            <tbody className={`divide-y ${isDark ? 'divide-gray-800/40' : 'divide-slate-200'}`}>
               {filteredDispatchedOrders.map((order) => (
                 <tr 
                   key={order.id}
                   className={`transition-colors ${
-                    isDark ? 'hover:bg-[#18181B]/80' : 'hover:bg-gray-50'
+                    isDark ? 'hover:bg-[#18181B]/80' : 'hover:bg-slate-50/80'
                   }`}
                 >
                   {/* Order Number */}
-                  <td className="py-3 px-3 font-mono font-bold text-teal-400">
+                  <td className="py-3 px-3 font-mono font-bold text-teal-700 dark:text-teal-400">
                     {order.orderNumber}
                   </td>
 
                   {/* Customer Info */}
                   <td className="py-3 px-3">
-                    <div className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>
+                    <div className={`font-bold ${isDark ? 'text-gray-200' : 'text-slate-950'}`}>
                       {order.customerName}
                     </div>
                     {order.customerCompany && (
-                      <div className={`text-[11px] ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div className={`text-[11px] font-medium ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
                         {order.customerCompany}
                       </div>
                     )}
@@ -399,13 +402,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <div className="space-y-1">
                       {order.items.slice(0, 2).map((it, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 text-[11px]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{it.productName}</span>
-                          <span className="text-gray-400 font-mono">({it.quantity} {it.unit})</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0"></span>
+                          <span className={isDark ? 'text-gray-300' : 'text-slate-900 font-medium'}>{it.productName}</span>
+                          <span className={`font-mono ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>({it.quantity} {it.unit})</span>
                         </div>
                       ))}
                       {order.items.length > 2 && (
-                        <span className="text-[10px] text-gray-500">
+                        <span className={`text-[10px] font-semibold ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
                           + {order.items.length - 2} قلم دیگر
                         </span>
                       )}
@@ -413,18 +416,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </td>
 
                   {/* Amount */}
-                  <td className="py-3 px-3 font-mono font-bold text-emerald-400">
+                  <td className="py-3 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">
                     {formatCurrency(order.totalAmount)}
                   </td>
 
                   {/* Date */}
-                  <td className="py-3 px-3 text-[11px] text-gray-400">
+                  <td className={`py-3 px-3 text-[11px] font-medium ${isDark ? 'text-gray-400' : 'text-slate-700'}`}>
                     {formatDateFa(order.dispatchedDate || order.orderDate)}
                   </td>
 
                   {/* Tracking Code */}
                   <td className="py-3 px-3">
-                    <span className="px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-400 font-mono text-[11px] border border-indigo-500/20">
+                    <span className="px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 font-mono text-[11px] font-bold border border-indigo-500/20">
                       {order.trackingCode || 'TRK-DEFAULT'}
                     </span>
                   </td>
@@ -436,7 +439,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
                         isDark 
                           ? 'bg-[#18181B] border-[#27272A] text-gray-300 hover:text-white hover:border-teal-500' 
-                          : 'bg-gray-100 border-gray-200 text-gray-700 hover:text-gray-900'
+                          : 'bg-slate-100 border-slate-200 text-slate-800 hover:text-slate-950 hover:border-slate-300'
                       }`}
                       title="مشاهده جزئیات سفارش و فاکتور"
                     >
@@ -449,7 +452,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </table>
 
           {filteredDispatchedOrders.length === 0 && (
-            <div className="text-center py-8 text-gray-500 text-xs">
+            <div className="text-center py-8 text-slate-500 text-xs">
               سفارش تحویل‌شده‌ای با این مشخصات یافت نشد.
             </div>
           )}

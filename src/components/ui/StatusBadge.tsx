@@ -24,14 +24,17 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     const badge = getOrderStatusBadge(value);
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
+        dir="rtl"
+        className={`inline-flex items-center whitespace-nowrap shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
           isDark
             ? `${badge.bgDark} ${badge.textDark} ${badge.borderDark}`
             : `${badge.bgLight} ${badge.textLight} ${badge.borderLight}`
         } ${className}`}
       >
-        <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-80" />
-        {badge.label}
+        <span className="w-1.5 h-1.5 rounded-full ml-1.5 bg-current opacity-90 shrink-0" />
+        <bdi dir="auto" className="inline-block whitespace-nowrap leading-none">
+          {badge.label}
+        </bdi>
       </span>
     );
   }
@@ -40,24 +43,31 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     const badge = getPriorityBadge(value);
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-colors ${
+        dir="rtl"
+        className={`inline-flex items-center whitespace-nowrap shrink-0 px-2.5 py-0.5 rounded-lg text-[11px] font-bold border transition-colors ${
           isDark
             ? `${badge.bgDark} ${badge.textDark} ${badge.borderDark}`
             : `${badge.bgLight} ${badge.textLight} ${badge.borderLight}`
         } ${className}`}
       >
-        {badge.label}
+        <bdi dir="auto" className="inline-block whitespace-nowrap leading-none">
+          {badge.label}
+        </bdi>
       </span>
     );
   }
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
-        customColor || (isDark ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-slate-100 text-slate-800 border-slate-200')
+      dir="rtl"
+      className={`inline-flex items-center whitespace-nowrap shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
+        customColor || (isDark ? 'bg-zinc-800 text-zinc-200 border-zinc-700' : 'bg-slate-100 text-slate-800 border-slate-300 font-bold')
       } ${className}`}
     >
-      {customLabel || value}
+      <bdi dir="auto" className="inline-block whitespace-nowrap leading-none">
+        {customLabel || value}
+      </bdi>
     </span>
   );
 };
+

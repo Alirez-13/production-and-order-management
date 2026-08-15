@@ -141,12 +141,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className={`w-full md:w-64 rounded-2xl flex flex-col shrink-0 shadow-sm self-start transition-colors border ${
-      isDark ? 'bg-[#111113] border-gray-800/80' : 'bg-white border-gray-200'
+    <aside className={`w-full md:w-64 rounded-2xl flex flex-col shrink-0 shadow-xs self-start transition-colors border ${
+      isDark ? 'bg-[#111113] border-gray-800/80' : 'bg-white border-slate-200'
     }`}>
       <div className="p-3 space-y-1.5 flex-1">
-        <div className={`text-[11px] font-bold tracking-wider uppercase px-3 py-1 mb-1 ${
-          isDark ? 'text-gray-500' : 'text-gray-400'
+        <div className={`text-[11px] font-bold tracking-normal uppercase px-3 py-1 mb-1 ${
+          isDark ? 'text-gray-400' : 'text-slate-800'
         }`}>
           بخش‌های عملیاتی کارخانه
         </div>
@@ -162,17 +162,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => onTabChange(item.id)}
               className={`w-full text-right p-2.5 rounded-xl flex items-start gap-3 transition-all relative cursor-pointer ${
                 isActive
-                  ? 'bg-teal-600 text-white shadow-md shadow-teal-900/20 font-semibold'
+                  ? 'bg-teal-600 text-white shadow-md shadow-teal-900/20 font-bold'
                   : hasRead
                   ? isDark 
-                    ? 'text-gray-300 hover:bg-[#1E1E22] hover:text-white'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'text-gray-200 hover:bg-[#1E1E22] hover:text-white'
+                    : 'text-slate-900 hover:bg-slate-100 hover:text-slate-950 font-semibold'
                   : isDark 
                     ? 'text-gray-500 bg-[#0F0F12] opacity-60' 
-                    : 'text-gray-400 bg-gray-50 opacity-60'
+                    : 'text-slate-500 bg-slate-50 opacity-60'
               }`}
             >
-              <div className={`p-1 rounded-lg shrink-0 ${isActive ? 'text-white' : isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div className={`p-1 rounded-lg shrink-0 ${isActive ? 'text-white' : isDark ? 'text-gray-400' : 'text-slate-700'}`}>
                 {item.icon}
               </div>
 
@@ -189,8 +189,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </span>
                   )}
                 </div>
-                <p className={`text-[10px] truncate mt-0.5 ${
-                  isActive ? 'text-teal-100' : isDark ? 'text-gray-400' : 'text-gray-500'
+                <p className={`text-[10px] truncate mt-0.5 font-medium ${
+                  isActive ? 'text-teal-100' : isDark ? 'text-gray-400' : 'text-slate-700'
                 }`}>
                   {item.sublabel}
                 </p>
@@ -199,7 +199,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {perm && (
                   <div className="mt-1.5 flex items-center gap-1">
                     <span
-                      className={`inline-flex items-center gap-0.5 text-[9px] font-semibold px-1.5 py-0.2 rounded border ${
+                      className={`inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded border ${
                         isActive ? 'bg-white/15 text-white border-white/20' : `${perm.bg}`
                       }`}
                     >
@@ -216,19 +216,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Footer info in sidebar */}
       <div className={`p-3 m-3 rounded-xl border text-[11px] space-y-1 ${
-        isDark ? 'bg-[#0F0F12] border-gray-800/80 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600'
+        isDark ? 'bg-[#0F0F12] border-gray-800/80 text-gray-300' : 'bg-slate-50 border-slate-200 text-slate-800'
       }`}>
-        <div className={`flex items-center justify-between font-bold ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>
+        <div className={`flex items-center justify-between font-bold ${isDark ? 'text-gray-200' : 'text-slate-950'}`}>
           <span className="flex items-center gap-1">
-            <Database className="w-3 h-3 text-teal-500" />
+            <Database className="w-3.5 h-3.5 text-teal-600" />
             پایگاه داده SQLite
           </span>
-          <span className="flex items-center gap-1 text-emerald-500 text-[10px]">
+          <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold text-[10px]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             فعال
           </span>
         </div>
-        <div className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+        <div className={`text-[10px] font-medium ${isDark ? 'text-gray-400' : 'text-slate-700'}`}>
           ذخیره‌سازی پایدار در دیتابیس محلی کارخانه
         </div>
       </div>

@@ -2,64 +2,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
 
 /* ==========================================================================
-   SEMANTIC DESIGN TOKENS (LIGHT & DARK THEMES) - WCAG AAA/AA COMPLIANT
+   SEMANTIC DESIGN TOKENS (HIGH CONTRAST WCAG AAA/AA FOR OUTDOOR & INDOOR)
    ========================================================================== */
 
 :root {
   font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light dark;
 
-  /* Surface Elevations (Light Mode - Soft Off-Whites & Zinc Scales) */
+  /* Surface Elevations (Light Mode - High Contrast Crisp Backgrounds) */
   --surface-base: #F8FAFC;
-  --surface-sunken: #F1F5F9;
+  --surface-sunken: #EEF2F6;
   --surface-raised: #FFFFFF;
   --surface-overlay: #FFFFFF;
   --surface-card: #FFFFFF;
   --surface-subtle: #F1F5F9;
 
-  /* Text & Content Tokens */
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
+  /* Text & Content Tokens - High Contrast for Outdoor Sunlight Readability (>7:1 contrast) */
+  --text-primary: #090D16;   /* Rich deep slate/black, contrast > 15:1 */
+  --text-secondary: #1E293B; /* Slate 800, contrast > 10:1 */
+  --text-muted: #334155;     /* Slate 700, contrast > 6.5:1 (far exceeds 4.5:1 minimum) */
   --text-inverse: #FFFFFF;
 
-  /* Border & Divider Tokens */
+  /* Border & Divider Tokens (Crisp separation, no washed out hairlines) */
   --border-subtle: #E2E8F0;
   --border-default: #CBD5E1;
-  --border-strong: #94A3B8;
+  --border-strong: #64748B;
 
   /* Brand & Interactive Accent Tokens */
   --interactive-accent: #0D9488;
   --interactive-accent-hover: #0F766E;
   --interactive-accent-surface: #F0FDFA;
   --interactive-accent-text: #0F766E;
-  --interactive-accent-border: #99F6E4;
+  --interactive-accent-border: #5EEAD4;
 
-  /* Status Tokens */
+  /* Status Tokens - Light Mode (High Contrast Text & High-Visibility Badges) */
   --status-success-bg: #ECFDF5;
-  --status-success-text: #065F46;
-  --status-success-border: #A7F3D0;
+  --status-success-text: #064E3B; /* Slate-emerald dark (contrast > 8:1) */
+  --status-success-border: #6EE7B7;
 
   --status-warning-bg: #FFFBEB;
-  --status-warning-text: #92400E;
-  --status-warning-border: #FDE68A;
+  --status-warning-text: #78350F; /* Deep amber (contrast > 7.5:1) */
+  --status-warning-border: #FCD34D;
 
   --status-danger-bg: #FEF2F2;
-  --status-danger-text: #991B1B;
-  --status-danger-border: #FECACA;
+  --status-danger-text: #7F1D1D;  /* Rich crimson (contrast > 8:1) */
+  --status-danger-border: #FCA5A5;
 
   --status-info-bg: #EFF6FF;
-  --status-info-text: #1E40AF;
-  --status-info-border: #BFDBFE;
+  --status-info-text: #1E3A8A;    /* Dark cobalt blue (contrast > 8:1) */
+  --status-info-border: #93C5FD;
 
   /* Focus & Elevation Shadows */
-  --focus-ring: rgba(13, 148, 136, 0.4);
-  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-  --shadow-overlay: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  --focus-ring: rgba(13, 148, 136, 0.45);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --shadow-overlay: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
 }
 
 html.dark {
-  /* Surface Elevations (Dark Mode - Layered Slate & Navy, Zero Crushed Blacks) */
+  /* Surface Elevations (Dark Mode - Layered Slate & Zinc, Zero Crushed Blacks) */
   --surface-base: #0B0F17;
   --surface-sunken: #070A0F;
   --surface-raised: #111827;
@@ -68,9 +68,9 @@ html.dark {
   --surface-subtle: #161F30;
 
   /* Text & Content Tokens */
-  --text-primary: #F3F4F6;
-  --text-secondary: #9CA3AF;
-  --text-muted: #6B7280;
+  --text-primary: #F8FAFC;
+  --text-secondary: #E2E8F0;
+  --text-muted: #94A3B8;
   --text-inverse: #0B0F17;
 
   /* Border & Divider Tokens */
@@ -78,38 +78,38 @@ html.dark {
   --border-default: #374151;
   --border-strong: #4B5563;
 
-  /* Brand & Interactive Accent Tokens (Calibrated & Desaturated for Dark Mode) */
+  /* Brand & Interactive Accent Tokens */
   --interactive-accent: #14B8A6;
   --interactive-accent-hover: #2DD4BF;
-  --interactive-accent-surface: rgba(20, 184, 166, 0.12);
+  --interactive-accent-surface: rgba(20, 184, 166, 0.15);
   --interactive-accent-text: #5EEAD4;
-  --interactive-accent-border: rgba(20, 184, 166, 0.3);
+  --interactive-accent-border: rgba(20, 184, 166, 0.35);
 
-  /* Status Tokens */
-  --status-success-bg: rgba(6, 95, 70, 0.25);
+  /* Status Tokens - Dark Mode */
+  --status-success-bg: rgba(6, 78, 59, 0.35);
   --status-success-text: #6EE7B7;
-  --status-success-border: rgba(16, 185, 129, 0.35);
+  --status-success-border: rgba(16, 185, 129, 0.45);
 
-  --status-warning-bg: rgba(146, 64, 14, 0.25);
-  --status-warning-text: #FCD34D;
-  --status-warning-border: rgba(245, 158, 11, 0.35);
+  --status-warning-bg: rgba(120, 53, 15, 0.35);
+  --status-warning-text: #FDE68A;
+  --status-warning-border: rgba(245, 158, 11, 0.45);
 
-  --status-danger-bg: rgba(153, 27, 27, 0.25);
-  --status-danger-text: #FCA5A5;
-  --status-danger-border: rgba(239, 68, 68, 0.35);
+  --status-danger-bg: rgba(127, 29, 29, 0.35);
+  --status-danger-text: #FECACA;
+  --status-danger-border: rgba(239, 68, 68, 0.45);
 
-  --status-info-bg: rgba(30, 64, 175, 0.25);
-  --status-info-text: #93C5FD;
-  --status-info-border: rgba(59, 130, 246, 0.35);
+  --status-info-bg: rgba(30, 58, 138, 0.35);
+  --status-info-text: #BFDBFE;
+  --status-info-border: rgba(59, 130, 246, 0.45);
 
   /* Focus & Elevation Shadows */
   --focus-ring: rgba(20, 184, 166, 0.5);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-overlay: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-overlay: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
 /* ==========================================================================
-   GLOBAL RESET & TYPOGRAPHIC BASE
+   GLOBAL RESET & PERSIAN / RTL TYPOGRAPHIC HARDENING
    ========================================================================== */
 
 * {
@@ -117,12 +117,35 @@ html.dark {
   box-sizing: border-box;
 }
 
+html {
+  direction: rtl;
+}
+
 body {
   background-color: var(--surface-base);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.7;
+  letter-spacing: normal !important; /* CRITICAL: Prevent Latin letter-spacing from breaking Arabic/Persian cursive connections */
+  word-break: normal;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* RTL-safe headings and text flow */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.4;
+  letter-spacing: normal !important;
+}
+
+/* Direction-isolated inline badges and tags */
+.badge-isolated {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  unicode-bidi: isolate;
 }
 
 /* Touch Target Accessibility Standard (min 44px - 48px on mobile) */
@@ -164,6 +187,17 @@ body {
   flex-shrink: 0;
 }
 
+/* Fluid responsive typography utilities */
+.text-fluid-title {
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  line-height: 1.35;
+}
+
+.text-fluid-sub {
+  font-size: clamp(0.75rem, 1.5vw, 0.8125rem);
+  line-height: 1.5;
+}
+
 /* Scrollbar styles */
 ::-webkit-scrollbar {
   width: 6px;
@@ -200,5 +234,6 @@ html:not(.dark) ::-webkit-scrollbar-thumb:hover {
 .persian-num {
   font-feature-settings: "ss01";
 }
+
 
 

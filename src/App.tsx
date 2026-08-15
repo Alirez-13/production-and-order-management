@@ -113,7 +113,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 gap-6">
+      <div className="flex-1 flex flex-col md:flex-row max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 gap-6">
         
         {/* Navigation Sidebar */}
         <Sidebar

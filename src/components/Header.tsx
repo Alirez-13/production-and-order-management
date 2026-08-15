@@ -68,10 +68,10 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className={`sticky top-0 z-30 border-b transition-colors shadow-sm ${
-      isDark ? 'bg-[#0F0F11] border-gray-800/80' : 'bg-white border-gray-200 shadow-slate-100'
+    <header className={`sticky top-0 z-30 border-b transition-colors shadow-xs ${
+      isDark ? 'bg-[#0F0F11] border-gray-800/80' : 'bg-white border-slate-200 shadow-slate-200/50'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="flex items-center justify-between h-16">
           
           {/* Logo & Platform Info */}
@@ -81,19 +81,19 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className={`text-base font-bold leading-tight ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                <h1 className={`text-base font-bold leading-tight ${isDark ? 'text-gray-100' : 'text-slate-900'}`}>
                   سامانه مدیریت تولید و سفارشات
                 </h1>
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${
                   isDark 
                     ? 'bg-teal-950/60 text-teal-300 border-teal-800/60' 
-                    : 'bg-teal-50 text-teal-700 border-teal-200'
+                    : 'bg-teal-50 text-teal-800 border-teal-300'
                 }`}>
-                  <Database className="w-3 h-3 text-teal-500" />
+                  <Database className="w-3 h-3 text-teal-600" />
                   Express + SQLite
                 </span>
               </div>
-              <p className={`text-xs hidden sm:block ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-xs hidden sm:block ${isDark ? 'text-gray-400' : 'text-slate-700 font-medium'}`}>
                 سیستم آنلاین خط تولید (در صف / در حال تولید / تکمیل شده) و انبارداری یکپارچه
               </p>
             </div>
@@ -104,13 +104,13 @@ export const Header: React.FC<HeaderProps> = ({
             
             {/* Urgent & Stock Alerts Pill */}
             {(lowStockCount > 0 || urgentOrdersCount > 0) && (
-              <div className={`hidden lg:flex items-center gap-2 px-2.5 py-1 border rounded-xl text-xs ${
+              <div className={`hidden lg:flex items-center gap-2 px-2.5 py-1 border rounded-xl text-xs font-semibold ${
                 isDark 
-                  ? 'bg-amber-950/40 border-amber-800/60 text-amber-300' 
-                  : 'bg-amber-50 border-amber-200 text-amber-800'
+                  ? 'bg-amber-950/60 border-amber-800/80 text-amber-200' 
+                  : 'bg-amber-100 border-amber-300 text-amber-950 shadow-xs'
               }`}>
-                <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse" />
-                <span>
+                <AlertTriangle className="w-4 h-4 text-amber-600 animate-pulse shrink-0" />
+                <span className="whitespace-nowrap">
                   {urgentOrdersCount > 0 && `${urgentOrdersCount} سفارش فوری`}
                   {urgentOrdersCount > 0 && lowStockCount > 0 && ' | '}
                   {lowStockCount > 0 && `${lowStockCount} کسری انبار`}
@@ -123,28 +123,28 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors border cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors border cursor-pointer ${
                   isDark
                     ? 'bg-[#161618] hover:bg-[#1E1E22] text-gray-200 border-gray-800'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300'
                 }`}
                 title="فیلتر بازه زمانی"
               >
-                <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                <span className="hidden sm:inline text-gray-400">بازه:</span>
-                <span className="font-semibold">{timeFilterLabels[timeFilter]}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                <Calendar className={`w-3.5 h-3.5 ${isDark ? 'text-gray-400' : 'text-slate-700'}`} />
+                <span className={`hidden sm:inline ${isDark ? 'text-gray-400' : 'text-slate-700'}`}>بازه:</span>
+                <span className="font-bold">{timeFilterLabels[timeFilter]}</span>
+                <ChevronDown className={`w-3.5 h-3.5 ${isDark ? 'text-gray-400' : 'text-slate-700'}`} />
               </button>
 
               {isTimeDropdownOpen && (
                 <div 
                   className={`absolute left-0 mt-1 w-44 rounded-xl shadow-2xl border py-1.5 z-40 animate-in fade-in ${
-                    isDark ? 'bg-[#161618] border-gray-800' : 'bg-white border-gray-200'
+                    isDark ? 'bg-[#161618] border-gray-800' : 'bg-white border-slate-300 shadow-slate-300/60'
                   }`}
                   onClick={() => setIsTimeDropdownOpen(false)}
                 >
-                  <div className={`px-3 py-1 text-[11px] font-semibold border-b ${
-                    isDark ? 'text-gray-400 border-gray-800/80' : 'text-gray-500 border-gray-100'
+                  <div className={`px-3 py-1 text-[11px] font-bold border-b ${
+                    isDark ? 'text-gray-400 border-gray-800/80' : 'text-slate-800 border-slate-200'
                   }`}>
                     بازه زمانی گزارشات
                   </div>
@@ -154,12 +154,12 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => onTimeFilterChange(key)}
                       className={`w-full text-right px-3 py-1.5 text-xs flex items-center justify-between transition-colors cursor-pointer ${
                         timeFilter === key 
-                          ? isDark ? 'text-teal-400 font-bold bg-teal-950/40' : 'text-teal-700 font-bold bg-teal-50'
-                          : isDark ? 'text-gray-300 hover:bg-[#202026]' : 'text-gray-700 hover:bg-gray-100'
+                          ? isDark ? 'text-teal-400 font-bold bg-teal-950/40' : 'text-teal-900 font-bold bg-teal-100/80'
+                          : isDark ? 'text-gray-300 hover:bg-[#202026]' : 'text-slate-800 hover:bg-slate-100 font-medium'
                       }`}
                     >
                       <span>{timeFilterLabels[key]}</span>
-                      {timeFilter === key && <span className="w-1.5 h-1.5 rounded-full bg-teal-400"></span>}
+                      {timeFilter === key && <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span>}
                     </button>
                   ))}
                 </div>
@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`p-2 rounded-xl transition-all border cursor-pointer ${
                 isDark
                   ? 'bg-[#161618] hover:bg-[#1E1E22] text-amber-400 border-gray-800'
-                  : 'bg-gray-100 hover:bg-gray-200 text-indigo-600 border-gray-200'
+                  : 'bg-slate-100 hover:bg-slate-200 text-indigo-700 border-slate-300'
               }`}
               title={isDark ? 'تغییر به تم روشن (Light Mode)' : 'تغییر به تم تاریک (Dark Mode)'}
             >
@@ -188,34 +188,34 @@ export const Header: React.FC<HeaderProps> = ({
                 className={`flex items-center gap-2.5 px-3 py-1.5 border rounded-xl transition-colors text-right cursor-pointer ${
                   isDark
                     ? 'bg-[#161618] hover:bg-[#1E1E22] border-gray-800'
-                    : 'bg-gray-100 hover:bg-gray-200 border-gray-200'
+                    : 'bg-slate-100 hover:bg-slate-200 border-slate-300'
                 }`}
               >
                 <div className="text-lg">{currentUser.avatar}</div>
                 <div className="hidden md:block text-right">
-                  <div className={`text-xs font-bold flex items-center gap-1 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <div className={`text-xs font-bold flex items-center gap-1 ${isDark ? 'text-gray-100' : 'text-slate-900'}`}>
                     {currentUser.name}
-                    <ShieldCheck className="w-3 h-3 text-teal-500 inline" />
+                    <ShieldCheck className="w-3 h-3 text-teal-600 inline" />
                   </div>
-                  <div className="text-[10px] text-teal-500 font-medium">
+                  <div className={`text-[10px] font-bold ${isDark ? 'text-teal-400' : 'text-teal-800'}`}>
                     {currentRole?.titleFa || 'نقش کاربری'}
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                <ChevronDown className={`w-3.5 h-3.5 ${isDark ? 'text-gray-400' : 'text-slate-700'}`} />
               </button>
 
               {isUserDropdownOpen && (
                 <div 
                   className={`absolute left-0 mt-1 w-72 rounded-xl shadow-2xl border py-2 z-40 animate-in fade-in ${
-                    isDark ? 'bg-[#161618] border-gray-800' : 'bg-white border-gray-200'
+                    isDark ? 'bg-[#161618] border-gray-800' : 'bg-white border-slate-300 shadow-slate-300/60'
                   }`}
                   onClick={() => setIsUserDropdownOpen(false)}
                 >
-                  <div className={`px-4 py-2 border-b ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
-                    <div className={`text-xs font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <div className={`px-4 py-2 border-b ${isDark ? 'border-gray-800' : 'border-slate-200'}`}>
+                    <div className={`text-xs font-bold ${isDark ? 'text-gray-100' : 'text-slate-900'}`}>
                       تغییر کاربر و نقش (RBAC)
                     </div>
-                    <div className={`text-[11px] mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className={`text-[11px] mt-0.5 font-medium ${isDark ? 'text-gray-400' : 'text-slate-700'}`}>
                       مجوزهای Read / Write بلادرنگ تغییر می‌کنند
                     </div>
                   </div>
@@ -232,25 +232,25 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className={`w-full text-right px-3 py-2 flex items-center gap-2.5 transition-colors cursor-pointer ${
                             isCurrent 
-                              ? isDark ? 'bg-teal-950/40 text-teal-200 font-semibold' : 'bg-teal-50 text-teal-900 font-semibold'
-                              : isDark ? 'text-gray-300 hover:bg-[#202026]' : 'text-gray-700 hover:bg-gray-100'
+                              ? isDark ? 'bg-teal-950/40 text-teal-200 font-semibold' : 'bg-teal-100/90 text-teal-950 font-bold'
+                              : isDark ? 'text-gray-300 hover:bg-[#202026]' : 'text-slate-800 hover:bg-slate-100'
                           }`}
                         >
                           <span className="text-lg">{u.avatar}</span>
                           <div className="flex-1 min-w-0">
-                            <div className="text-xs font-medium truncate">{u.name}</div>
-                            <div className={`text-[10px] truncate ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{role?.titleFa}</div>
+                            <div className="text-xs font-bold truncate">{u.name}</div>
+                            <div className={`text-[10px] truncate ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>{role?.titleFa}</div>
                           </div>
-                          {isCurrent && <UserCheck className="w-4 h-4 text-teal-500 shrink-0" />}
+                          {isCurrent && <UserCheck className="w-4 h-4 text-teal-600 shrink-0" />}
                         </button>
                       );
                     })}
                   </div>
                   <div className={`px-3 pt-2 border-t flex items-center justify-between text-[11px] ${
-                    isDark ? 'border-gray-800 text-gray-400' : 'border-gray-100 text-gray-500'
+                    isDark ? 'border-gray-800 text-gray-400' : 'border-slate-200 text-slate-700 font-medium'
                   }`}>
                     <span>مدیریت دسترسی کاربران</span>
-                    <span className="text-teal-500 font-medium">Read/Write Active</span>
+                    <span className={`font-bold ${isDark ? 'text-teal-400' : 'text-teal-800'}`}>Read/Write Active</span>
                   </div>
                 </div>
               )}
@@ -264,7 +264,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`p-2 rounded-xl transition-colors border cursor-pointer ${
                 isDark
                   ? 'text-gray-400 hover:text-gray-200 hover:bg-[#161618] border-transparent hover:border-gray-800'
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 border-transparent hover:border-gray-200'
+                  : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100 border-slate-200 hover:border-slate-300'
               }`}
             >
               <RefreshCw className="w-4 h-4" />
