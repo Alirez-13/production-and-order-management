@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  ShieldCheck,
   CalendarDays,
   ChevronDown,
   AlertTriangle,
@@ -9,18 +8,22 @@ import {
   Moon,
   Factory,
 } from "lucide-react";
+
 import { AppUser, TimeRangeFilter, UserRole, ThemeMode } from "../types";
+
 import { StorageService } from "../services/storageService";
 
 interface HeaderProps {
   currentUser: AppUser;
   roles: UserRole[];
   onUserChange: (userId: string) => void;
+
   timeFilter: TimeRangeFilter;
   onTimeFilterChange: (filter: TimeRangeFilter) => void;
 
   lowStockCount: number;
   urgentOrdersCount: number;
+
   theme: ThemeMode;
   onToggleTheme: () => void;
 }
@@ -29,35 +32,67 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   roles,
   onUserChange,
+
   timeFilter,
   onTimeFilterChange,
+
   lowStockCount,
   urgentOrdersCount,
+
   theme,
   onToggleTheme,
 }) => {
   const isDark = theme === "dark";
 
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
+        setIsTimeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
   const users = StorageService.getUsers();
+
   const currentRole = roles.find((r) => r.id === currentUser.roleId);
 
   const timeFilterLabels: Record<TimeRangeFilter, string> = {
     today: "امروز",
     week: "این هفته",
     last_7_days: "۷ روز گذشته",
+
     month: "این ماه",
     this_month: "ماه جاری",
+
     last_30_days: "۳۰ روز گذشته",
+
     this_quarter: "سه ماهه (فصل)",
+
     year: "امسال",
     this_year: "سال جاری",
+
     all: "تمام دوره‌ها",
   };
-
-
 
   return (
     <header
@@ -67,7 +102,8 @@ export const Header: React.FC<HeaderProps> = ({
     >
       <div className="max-w-[100%] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="flex items-center justify-between h-[68px]">
-          {/* Logo & Platform Info */}
+          {/* Logo */}
+
           <div className="flex items-center gap-3">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
@@ -79,22 +115,20 @@ export const Header: React.FC<HeaderProps> = ({
               <Factory className="w-[19px] h-[19px]" strokeWidth={1.8} />
             </div>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <h1
-                  className={`text-[15px] font-semibold leading-tight ${
-                    isDark ? "text-slate-100" : "text-slate-900"
-                  }`}
-                >
-                  سامانه مدیریت تولید و سفارشات
-                </h1>
-              </div>
-            </div>
+            <h1
+              className={`text-[15px] font-semibold ${
+                isDark ? "text-slate-100" : "text-slate-900"
+              }`}
+            >
+              سامانه مدیریت تولید و سفارشات
+            </h1>
           </div>
 
-          {/* Right Side Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Urgent & Stock Alerts */}
+          {/* Right Controls */}
+
+          <div ref={dropdownRef} className="flex items-center gap-2 sm:gap-3">
+            {/* Alerts */}
+
             {(lowStockCount > 0 || urgentOrdersCount > 0) && (
               <div
                 className={`hidden lg:flex min-h-10 items-center gap-2 px-3 py-2 border rounded-xl text-xs font-medium ${
@@ -119,11 +153,16 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
 
-            {/* Time Filter Dropdown */}
+            {/* Time Filter */}
+
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
+                onClick={() => {
+                  setIsTimeDropdownOpen(!isTimeDropdownOpen);
+
+                  setIsUserDropdownOpen(false);
+                }}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border cursor-pointer ${
                   isDark
                     ? "bg-slate-900/70 hover:bg-slate-800 border-slate-700/80 text-slate-300"
@@ -148,20 +187,23 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
 
                 <ChevronDown
-                  className={`w-4 h-4 ${
+                  className={`w-4 h-4 transition-transform ${
                     isDark ? "text-slate-500" : "text-slate-400"
-                  }`}
+                  } ${isTimeDropdownOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
               {isTimeDropdownOpen && (
                 <div
-                  className={`absolute left-0 mt-2 w-48 rounded-xl border py-1.5 z-40 shadow-xl ${
+                  className={`absolute left-0 mt-2 w-48 rounded-xl border py-1.5 z-40 shadow-xl origin-top transition-all duration-200 ease-out ${
                     isDark
                       ? "bg-[#111827] border-[#1F2937]"
                       : "bg-white border-[#E2E8F0]"
+                  } *: ${
+                    isTimeDropdownOpen
+                      ? "opacity-100 scale-100 visible"
+                      : "opacity-0 scale-95 invisible"
                   }`}
-                  onClick={() => setIsTimeDropdownOpen(false)}
                 >
                   <div
                     className={`px-3 py-2 text-xs font-semibold border-b ${
@@ -177,7 +219,10 @@ export const Header: React.FC<HeaderProps> = ({
                     (key) => (
                       <button
                         key={key}
-                        onClick={() => onTimeFilterChange(key)}
+                        onClick={() => {
+                          onTimeFilterChange(key);
+                          setIsTimeDropdownOpen(false);
+                        }}
                         className={`w-full text-right px-3 py-2 text-sm flex items-center justify-between transition-colors cursor-pointer ${
                           timeFilter === key
                             ? isDark
@@ -204,7 +249,8 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Light / Dark Mode Toggle */}
+            {/* Theme Toggle */}
+
             <button
               type="button"
               onClick={onToggleTheme}
@@ -221,29 +267,29 @@ export const Header: React.FC<HeaderProps> = ({
                 <Moon className="w-4 h-4 text-blue-600" />
               )}
             </button>
+            {/* User Role Switcher */}
 
-            {/* Active Role Switcher */}
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                onClick={() => {
+                  setIsUserDropdownOpen(!isUserDropdownOpen);
+
+                  setIsTimeDropdownOpen(false);
+                }}
                 className={`flex items-center gap-2.5 px-3 py-2 border rounded-xl transition-colors text-right cursor-pointer ${
                   isDark
                     ? "bg-[#111827] hover:bg-slate-800/70 border-[#1F2937]"
                     : "bg-white hover:bg-slate-50 border-[#E2E8F0]"
                 }`}
               >
-                <div className="text-lg">{currentUser.avatar}</div>
-
                 <div className="hidden md:block text-right">
                   <div
-                    className={`text-sm font-semibold flex items-center gap-1 ${
+                    className={`text-sm font-semibold ${
                       isDark ? "text-slate-100" : "text-slate-900"
                     }`}
                   >
                     {currentUser.name}
-
-                    <ShieldCheck className="w-3.5 h-3.5 text-blue-500" />
                   </div>
 
                   <div
@@ -256,20 +302,24 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 <ChevronDown
-                  className={`w-4 h-4 ${
+                  className={`w-4 h-4 transition-transform ${
                     isDark ? "text-slate-500" : "text-slate-400"
-                  }`}
+                  } ${isUserDropdownOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
               {isUserDropdownOpen && (
                 <div
-                  className={`absolute left-0 mt-2 w-72 rounded-xl border py-2 z-40 shadow-xl ${
+                  className={`absolute left-0 mt-2 w-72 rounded-xl border py-2 z-40 shadow-xl origin-top transition-all duration-200 ease-out ${
                     isDark
                       ? "bg-[#111827] border-[#1F2937]"
                       : "bg-white border-[#E2E8F0]"
-                  }`}
-                  onClick={() => setIsUserDropdownOpen(false)}
+                  }
+                  ${
+isUserDropdownOpen
+? "opacity-100 scale-100 visible"
+: "opacity-0 scale-95 invisible"
+}`}
                 >
                   <div
                     className={`px-4 py-2.5 border-b ${
@@ -304,7 +354,10 @@ export const Header: React.FC<HeaderProps> = ({
                           key={u.id}
                           onClick={() => {
                             StorageService.setCurrentUserId(u.id);
+
                             onUserChange(u.id);
+
+                            setIsUserDropdownOpen(false);
                           }}
                           className={`w-full text-right px-3 py-2.5 flex items-center gap-2.5 transition-colors cursor-pointer ${
                             isCurrent
@@ -316,8 +369,6 @@ export const Header: React.FC<HeaderProps> = ({
                                 : "text-slate-600 hover:bg-slate-50"
                           }`}
                         >
-                          <span className="text-lg">{u.avatar}</span>
-
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold truncate">
                               {u.name}
