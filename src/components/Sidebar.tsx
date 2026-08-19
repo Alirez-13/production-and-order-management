@@ -127,13 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           badge: undefined,
           module: "users" as ModuleName,
         },
-        {
-          id: "api_docs" as ActiveTab,
-          label: "مستندات API",
-          icon: <Code2 className="w-5 h-5" />,
-          badge: undefined,
-          module: null,
-        },
+
       ],
     },
   ];
